@@ -6,13 +6,13 @@ Argo connects various services to connect millions of users on platforms without
 
 # Table of Contents
 
-- [Project Features](README.md#Project Features)
-- [Deployment](README.md#Deployment)
-- [Deployment Highlights in Glitch](README.md#Deployment Highlights in-glitch)
-- [Deployment Highlights in Daki](README.md#Deployment Highlights in-daki)
-- [Deployment of ttyd webssh / filebrowser webftp](README.md#Deployment of ttyd-webssh--filebrowser-webftp)
-- [Thanks to the following authors for their articles and projects](README.md#Thanks to the following authors for their articles and projects)
-- [Disclaimer](README.md#Disclaimer)
+- [Project Features](README.md#project-features)
+- [Deployment](README.md#deployment)
+- [Deployment Highlights in Glitch](README.md#deployment-highlights-in-glitch)
+- [Deployment Highlights in Daki](README.md#deployment-highlights-in-daki)
+- [Deployment of ttyd webssh / filebrowser webftp](README.md#deployment-of-ttyd-webssh--filebrowser-webftp)
+- [Thanks to the following authors for their articles and projects](README.md#thanks-to-the-following-authors-for-their-articles-and-projects)
+- [Disclaimer](README.md#disclaimer)
 
 * * *
 
