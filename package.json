@@ -1,10 +1,10 @@
 {
-  "name": "express-hello-world",
+  "name": "v2ray",
   "version": "1.0.0",
-  "description": "Express Hello World",
+  "description": "V2ray Server",
   "main": "index.js",
-  "repository": "https://github.com/fscarmen2/Argo-X-JS-PaaS",
-  "author": "fscarmen",
+  "repository": "https://github.com/tahaghafuri/vercel-v2ray",
+  "author": "tahaghafuri",
   "license": "MIT",
   "private": false,
   "scripts": {
