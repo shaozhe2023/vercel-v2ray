@@ -1,26 +1,26 @@
 #!/usr/bin/env bash
 
-# 设置各变量，WS 路径前缀。(注意:伪装路径不需要 / 符号开始,为避免不必要的麻烦,请不要使用特殊符号.)
+# Set variables, WS path prefix. (Note: The disguised path does not need to start with a / symbol. To avoid unnecessary trouble, please do not use special characters.)
 WSPATH=${WSPATH:-'argo'}
 UUID=${UUID:-'de04add9-5c68-8bab-950c-08cd5320df18'}
 WEB_USERNAME=${WEB_USERNAME:-'admin'}
 WEB_PASSWORD=${WEB_PASSWORD:-'password'}
 
-# 哪吒4个参数，ssl/tls 看是否需要，不需要的话可以留空，删除或在这4行最前面加 # 以注释
+# Nezha 4 parameters, ssl/tls see if needed, leave blank if not needed, delete or comment out at the beginning of these 4 lines
 NEZHA_SERVER="$NEZHA_SERVER"
 NEZHA_PORT="$NEZHA_PORT"
 NEZHA_KEY="$NEZHA_KEY"
 NEZHA_TLS="$NEZHA_TLS"
 
-# Argo 固定域名隧道的两个参数,这个可以填 Json 内容或 Token 内容，不需要的话可以留空，删除或在这三行最前面加 # 以注释
+# Argo fixed domain tunnel two parameters, this can be filled with Json content or Token content, leave blank if not needed, delete or comment out at the beginning of these three lines
 ARGO_AUTH=''
 ARGO_DOMAIN="$ARGO_DOMAIN"
 
-# ttyd / filebrowser argo 域名
+# ttyd / filebrowser argo domain
 SSH_DOMAIN="$SSH_AUTH"
 FTP_DOMAIN="$FTP_AUTH"
 
-# 安装系统依赖
+# Install system dependencies
 check_dependencies() {
   DEPS_CHECK=("wget" "unzip" "ss" "tar")
   DEPS_INSTALL=(" wget" " unzip" " iproute2" "tar")
@@ -28,7 +28,7 @@ check_dependencies() {
   [ -n "$DEPS" ] && { apt-get update >/dev/null 2>&1; apt-get install -y $DEPS >/dev/null 2>&1; }
 }
 
-# 生成 X 配置文件
+# Generate X configuration file
 generate_config() {
   cat > config.json << EOF
 {
@@ -267,7 +267,7 @@ ARGO_DOMAIN=${ARGO_DOMAIN}
 SSH_DOMAIN=${SSH_DOMAIN}
 FTP_DOMAIN=${FTP_DOMAIN}
 
-# 下载并运行 Argo
+# Download and run Argo
 check_file() {
   [ ! -e cloudflared ] && wget -O cloudflared https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 && chmod +x cloudflared
 }
@@ -321,9 +321,9 @@ vmess://\$(echo \$VMESS | base64 -w0)
 trojan://${UUID}@icook.hk:443?security=tls&sni=\${ARGO_DOMAIN}&type=ws&host=\${ARGO_DOMAIN}&path=%2F${WSPATH}-trojan?ed=2048#Argo-Trojan
 ----------------------------
 ss://$(echo "chacha20-ietf-poly1305:${UUID}@icook.hk:443" | base64 -w0)@icook.hk:443#Argo-Shadowsocks
-由于该软件导出的链接不全，请自行处理如下: 传输协议: WS ， 伪装域名: \${ARGO_DOMAIN} ，路径: /${WSPATH}-shadowsocks?ed=2048 ， 传输层安全: tls ， sni: \${ARGO_DOMAIN}
+Due to the incomplete links exported by this software, please handle the following yourself: Transmission protocol: WS, Disguised domain: \${ARGO_DOMAIN}, Path: /${WSPATH}-shadowsocks?ed=2048, Transport layer security: tls, sni: \${ARGO_DOMAIN}
 *******************************************
-小火箭:
+Shadowrocket:
 ----------------------------
 vless://${UUID}@icook.hk:443?encryption=none&security=tls&type=ws&host=\${ARGO_DOMAIN}&path=/${WSPATH}-vless?ed=2048&sni=\${ARGO_DOMAIN}#Argo-Vless
 ----------------------------
@@ -356,23 +356,23 @@ generate_nezha() {
   cat > nezha.sh << EOF
 #!/usr/bin/env bash
 
-# 哪吒的4个参数
+# Nezha's 4 parameters
 NEZHA_SERVER="$NEZHA_SERVER"
 NEZHA_PORT="$NEZHA_PORT"
 NEZHA_KEY="$NEZHA_KEY"
 NEZHA_TLS="$NEZHA_TLS"
 
-# 检测是否已运行
+# Check if already running
 check_run() {
-  [[ \$(pgrep -laf nezha-agent) ]] && echo "哪吒客户端正在运行中!" && exit
+  [[ \$(pgrep -laf nezha-agent) ]] && echo "Nezha client is already running!" && exit
 }
 
-# 三个变量不全则不安装哪吒客户端
+# Do not install Nezha client if three variables are not complete
 check_variable() {
   [[ -z "\${NEZHA_SERVER}" || -z "\${NEZHA_PORT}" || -z "\${NEZHA_KEY}" ]] && exit
 }
 
-# 下载最新版本 Nezha Agent
+# Download the latest version of Nezha Agent
 download_agent() {
   if [ ! -e nezha-agent ]; then
     URL=\$(wget -qO- -4 "https://api.github.com/repos/naiba/nezha/releases/latest" | grep -o "https.*linux_amd64.zip")
