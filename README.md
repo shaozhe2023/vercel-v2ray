@@ -1,76 +1,75 @@
 # Xray + Argo for Express.js PaaS
 
-在没有公网的平台挖啊挖啊挖，Argo打通各式服务连接千万家。---为 JS 平台而生
+Argo connects various services to connect millions of users on platforms without public networks. --- Born for the JS platform
 
 * * *
 
-# 目录
+# Table of Contents
 
-- [项目特点](README.md#项目特点)
-- [部署](README.md#部署)
-- [在 Glitch 部署重点](README.md#在-glitch-部署重点)
-- [在 Daki 部署重点](README.md#在-daki-部署重点)
-- [ttyd webssh / filebrowser webftp 的部署](README.md#ttyd-webssh--filebrowser-webftp-的部署)
-- [鸣谢下列作者的文章和项目](README.md#鸣谢下列作者的文章和项目)
-- [免责声明](README.md#免责声明)
+- [Project Features](README.md#Project Features)
+- [Deployment](README.md#Deployment)
+- [Deployment Highlights in Glitch](README.md#Deployment Highlights in-glitch)
+- [Deployment Highlights in Daki](README.md#Deployment Highlights in-daki)
+- [Deployment of ttyd webssh / filebrowser webftp](README.md#Deployment of ttyd-webssh--filebrowser-webftp)
+- [Thanks to the following authors for their articles and projects](README.md#Thanks to the following authors for their articles and projects)
+- [Disclaimer](README.md#Disclaimer)
 
 * * *
 
-## 项目特点:
-* 本项目用于在 Express.js PaaS 平台上部署 Xray，采用的方案为 Argo + Xray + WebSocket + TLS
-* 解锁 ChatGPT
-* 在浏览器查看系统各项信息，方便直观
-* 使用 CloudFlare 的 Argo 隧道，直接优选 + 隧道，CDN 不用再做 workers
-* 回流分流，同时支持 Xray 4 种主流协议: vless /  vmess / trojan / shadowsocks
-* vmess 和 vless 的 uuid，trojan 和 shadowsocks 的 password，各协议的 ws 路径既可以自定义，又或者使用默认值
-* 集成哪吒探针，可以自由选择是否安装
-* 前端 js 定时保活，会玩的用户可以根据具体情况修改间隔时间
-* 节点信息以 V2rayN / Clash / 小火箭 链接方式输出
-* Xray 文件重新编译官方文件增加隐秘性，修改了运行时的显示信息，文件为: https://github.com/XTLS/Xray-core/blob/main/core/core.go
-* 可以使用浏览器使用 webssh 和 webftp，更方便管理系统
+## Project Features:
+* This project is used to deploy Xray on the Express.js PaaS platform, using the Argo + Xray + WebSocket + TLS solution
+* Unlock ChatGPT
+* View system information in the browser, convenient and intuitive
+* Use CloudFlare Argo tunnel, directly select + tunnel, CDN no longer needs to be workers
+* Backflow and diversion, support Xray's 4 mainstream protocols: vless / vmess / trojan / shadowsocks
+* vmess and vless uuid, trojan and shadowsocks password, ws path of each protocol can be customized or use the default value
+* Integrate Nezha probe, you can freely choose whether to install
+* Front-end js timed keep alive, users who know how to play can modify the interval time according to specific circumstances
+* Node information is output in V2rayN / Clash / Little Rocket link mode
+* Xray file recompiles official file to increase confidentiality, and modifies the display information at runtime. The file is: https://github.com/XTLS/Xray-core/blob/main/core/core.go
+* You can use webssh and webftp with a browser, which is more convenient for managing the system
 
 <img width="718" alt="image" src="https://user-images.githubusercontent.com/92626977/215277537-ff358dc1-7696-481f-b8e4-74f0cdff30f4.png">
 
-## 部署:
+## Deployment:
 
-### PaaS 平台用到的变量:
- 
-* 在 `server.js` 文件的第1、2行修改查询网页的用户名和密码
-  | 变量名        | 是否必须 | 默认值 | 备注 |
-  | ------------ | ------ | ------ | ------ |
-  | WEB_USERNAME | 是 | admin | 网页的用户名 |
-  | WEB_PASSWORD | 是 | password | 网页的密码 |
+### Variables used by the PaaS platform:
+
+* Modify the username and password for querying the web page in lines 1 and 2 of the `server.js` file
+| Variable name | Required | Default value | Remarks |
+| ------------ | ------ | ------ | ------ |
+| WEB_USERNAME | Yes | admin | Username of the web page |
+| WEB_PASSWORD | Yes | password | Password of the web page |
 
 <img width="939" alt="image" src="https://user-images.githubusercontent.com/92626977/221387298-4183a1d6-ae14-45f9-b498-1789a4f7117e.png">
 
-* 在 `entrypoint.sh` 文件的前面 4-15 行修改；访问页面的认证在 `server.js` 文件的第1、2行修改必填
-  | 变量名        | 是否必须 | 默认值 | 备注 |
-  | ------------ | ------ | ------ | ------ |
-  | UUID         | 否 | de04add9-5c68-8bab-950c-08cd5320df18 | 可在线生成 https://www.zxgj.cn/g/uuid |
-  | WSPATH       | 否 | argo | 勿以 / 开头，各协议路径为 `/WSPATH-协议`，如 `/argo-vless`,`/argo-vmess`,`/argo-trojan`,`/argo-shadowsocks` |
-  | NEZHA_SERVER | 否 |        | 哪吒探针服务端的 IP 或域名 |
-  | NEZHA_PORT   | 否 |        | 哪吒探针服务端的端口 |
-  | NEZHA_KEY    | 否 |        | 哪吒探针客户端专用 Key |
-  | NEZHA_TLS    | 否 |        | 哪吒探针是否启用 SSL/TLS 加密 ，如不启用请删除，如要启用填"1" |
-  | ARGO_AUTH    | 否 |        | Argo 的 Token 或者 json 值，其中 json 可以通过以下网站，在不需绑卡的情况下轻松获取: https://fscarmen.cloudflare.now.cc/ |
-  | ARGO_DOMAIN  | 否 |        | Argo 的域名，须与 ARGO_DOMAIN 必需一起填了才能生效 |
-  | SSH_DOMAIN   | 否 |        | webssh 的域名，用户名和密码就是 <WEB_USERNAME> 和 <WEB_PASSWORD> |
-  | FTP_DOMAIN   | 否 |        | webftp 的域名，用户名和密码就是 <WEB_USERNAME> 和 <WEB_PASSWORD> |  
-
+* Modify the first 4-15 lines of the `entrypoint.sh` file; the authentication of accessing the page is modified in the 1st and 2nd lines of the `server.js` file. Required
+| Variable name | Required | Default value | Remarks |
+| ------------ | ------ | ------ | ------ |
+| UUID | No | de04add9-5c68-8bab-950c-08cd5320df18 | Can be generated online https://www.zxgj.cn/g/uuid |
+| WSPATH | No | argo | Do not start with /, the protocol path is `/WSPATH-protocol`, such as `/argo-vless`,`/argo-vmess`,`/argo-trojan`,`/argo-shadowsocks` |
+| NEZHA_SERVER | No | | IP or domain name of the Nezha probe server |
+| NEZHA_PORT | No | | Port of the Nezha probe server |
+| NEZHA_KEY | No | | Nezha probe client-specific key |
+| NEZHA_TLS | No | | Whether to enable SSL/TLS encryption for the Nezha probe. If not, please delete it. If you want to enable it, fill in "1" |
+| ARGO_AUTH | No | | Argo's token or json value. The json value can be easily obtained from the following website without binding a card: https://fscarmen.cloudflare.now.cc/ |
+| ARGO_DOMAIN | No | | Argo's domain name. It must be filled in together with ARGO_DOMAIN to take effect |
+| SSH_DOMAIN | No | | The domain name, username and password of webssh are <WEB_USERNAME> and <WEB_PASSWORD> |
+| FTP_DOMAIN | No | | The domain name, username and password of webftp are <WEB_USERNAME> and <WEB_PASSWORD> |
 
 <img width="1301" alt="image" src="https://user-images.githubusercontent.com/92626977/226095672-ecbfc8e7-80f3-4821-abb4-df75c4ece483.png">
 
-* 需要应用的 js
-  | 命令 | 说明 |
-  | ---- |------ |
-  | <URL>/list   | 查看节点数据 |
-  | <URL>/status | 查看后台进程 |
-  | <URL>/listen | 查看后台监听端口 |
-  | <URL>/test	 | 测试是否为只读系统 |
+* js to be applied
+| Command | Description |
+| ---- |------ |
+| <URL>/list | View node data |
+| <URL>/status | View background process |
+| <URL>/listen | View background listening port |
+| <URL>/test | Test whether it is a read-only system |
 
-## 在 Glitch 部署重点
+## Deployment highlights in Glitch
 
-这里只作重点的展示，更详细可以参考项目: https://github.com/fscarmen2/X-for-Glitch
+Here we only show the highlights, for more details, please refer to the project: https://github.com/fscarmen2/X-for-Glitch
 
 <img width="1105" alt="image" src="https://user-images.githubusercontent.com/92626977/214567653-768f4f91-13b5-4205-9118-f5510081e260.png">
 
@@ -78,7 +77,7 @@
 
 <img width="322" alt="image" src="https://user-images.githubusercontent.com/92626977/214568380-b07dd83b-a4d6-43fe-9ead-79f1393e909c.png">
 
-## 在 Daki 部署重点
+## Deployment highlights in Daki
 
 <img width="1198" alt="image" src="https://user-images.githubusercontent.com/92626977/212642015-e84e07de-9f07-466d-b446-8cd8431e7220.png">
 
@@ -94,22 +93,22 @@
 
 <img width="322" alt="image" src="https://user-images.githubusercontent.com/92626977/214580604-8d4f6454-3b78-41a9-b765-cff714b85638.png">
 
-## ttyd webssh / filebrowser webftp 的部署
+## ttyd webssh / filebrowser webftp deployment
 
-* 原理
+* Principle
 ```
-+---------+     argo     +---------+     http     +--------+    ssh    +-----------+
-| browser | <==========> | CF edge | <==========> |  ttyd  | <=======> | ssh server|
-+---------+     argo     +---------+   websocket  +--------+    ssh    +-----------+
++---------+ argo +---------+ http +--------+ ssh +-----------+
+| browser | <==========> | CF edge | <==========> | ttyd | <=======> | ssh server|
++---------+ argo +---------+ websocket +--------+ ssh +-----------+
 
-+---------+     argo     +---------+     http     +--------------+    ftp    +-----------+
-| browser | <==========> | CF edge | <==========> | filebrowser  | <=======> | ftp server|
-+---------+     argo     +---------+   websocket  +--------------+    ftp    +-----------+
++---------+ argo +---------+ http +--------------+ ftp +-----------+
+| browser | <==========> | CF edge | <=========> | filebrowser | <=======> | ftp server|
++---------+ argo +---------+ websocket +--------------+ ftp +-----------+
 
 ```
 
-* 使用 Json 方式建的隧道
-  
+* Tunnel built using Json method
+
 <img width="1643" alt="image" src="https://user-images.githubusercontent.com/92626977/235453084-a8c55417-18b4-4a47-9eef-ee3053564bff.png">
 
 <img width="1303" alt="image" src="https://github.com/fscarmen2/aa/assets/92626977/652ef3ff-c9a9-4771-92c8-bab6c516abeb">
@@ -118,10 +117,10 @@
 
 <img width="1527" alt="image" src="https://github.com/fscarmen2/rrr/assets/92626977/91cece0d-cc61-4681-8eae-03f961a16976">
 
-## 鸣谢下列作者的文章和项目:
-* 前端 JS 在大佬 Nike Jeff 的项目 基础上，为了通用性和扩展功能作修改，https://github.com/hrzyang/glitch-trojan
-* 后端全部原创，如转载须注明来源。
+## Thanks to the following authors for their articles and projects:
+* The front-end JS is based on the project of Nike Jeff, and is modified for universality and extended functions, https://github.com/hrzyang/glitch-trojan
+* The back-end is all original, and the source must be indicated if reproduced.
 
-## 免责声明:
-* 本程序仅供学习了解, 非盈利目的，请于下载后 24 小时内删除, 不得用作任何商业用途, 文字、数据及图片均有所属版权, 如转载须注明来源。
-* 使用本程序必循遵守部署免责声明。使用本程序必循遵守部署服务器所在地、所在国家和用户所在国家的法律法规, 程序作者不对使用者任何不当行为负责。
+## Disclaimer:
+* This program is for learning and understanding only, not for profit, please delete it within 24 hours after downloading, It cannot be used for any commercial purpose. The text, data and pictures are all copyrighted. If reproduced, the source must be indicated.
+* The use of this program must comply with the deployment disclaimer. The use of this program must comply with the laws and regulations of the deployment server location, the country where it is located and the country where the user is located. The program author is not responsible for any improper behavior of the user.
