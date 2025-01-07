@@ -1,5 +1,5 @@
 const username = process.env.WEB_USERNAME || "admin";
-const password = process.env.WEB_PASSWORD || "password";
+const password = process.env.WEB_PASSWORD || "admin12345678";
 const url = "http://127.0.0.1";
 const port = process.env.PORT || 3000; /* Modify here when irregular port is allocated by container platform */
 const express = require("express");
